@@ -432,32 +432,29 @@ ${eventData.isPR ? formattedChangedFiles || "No files changed" : ""}
 <is_pr>${eventData.isPR ? "true" : "false"}</is_pr>
 <trigger_context>${triggerContext}</trigger_context>
 <repository>${context.repository}</repository>
-${
-  eventData.isPR
-    ? `<pr_number>${eventData.prNumber}</pr_number>`
-    : `<issue_number>${eventData.issueNumber ?? ""}</issue_number>`
-}
+${eventData.isPR
+      ? `<pr_number>${eventData.prNumber}</pr_number>`
+      : `<issue_number>${eventData.issueNumber ?? ""}</issue_number>`
+    }
 <claude_comment_id>${context.claudeCommentId}</claude_comment_id>
 <trigger_username>${context.triggerUsername ?? "Unknown"}</trigger_username>
 <trigger_display_name>${githubData.triggerDisplayName ?? context.triggerUsername ?? "Unknown"}</trigger_display_name>
 <trigger_phrase>${context.triggerPhrase}</trigger_phrase>
-${
-  (eventData.eventName === "issue_comment" ||
-    eventData.eventName === "pull_request_review_comment" ||
-    eventData.eventName === "pull_request_review") &&
-  eventData.commentBody
-    ? `<trigger_comment>
+${(eventData.eventName === "issue_comment" ||
+      eventData.eventName === "pull_request_review_comment" ||
+      eventData.eventName === "pull_request_review") &&
+      eventData.commentBody
+      ? `<trigger_comment>
 ${sanitizeContent(eventData.commentBody)}
 </trigger_comment>`
-    : ""
-}
-${
-  context.directPrompt
-    ? `<direct_prompt>
+      : ""
+    }
+${context.directPrompt
+      ? `<direct_prompt>
 ${sanitizeContent(context.directPrompt)}
 </direct_prompt>`
-    : ""
-}
+      : ""
+    }
 ${`<comment_tool_info>
 IMPORTANT: You have been provided with the mcp__github_file_ops__update_claude_comment tool to update your comment. This tool automatically handles both issue and PR comments.
 
@@ -521,22 +518,20 @@ ${context.directPrompt ? `   - DIRECT INSTRUCTION: A direct instruction was prov
       - Use file system tools to make the change locally.
       - If you discover related tasks (e.g., updating tests), add them to the todo list.
       - Mark each subtask as completed as you progress.
-      ${
-        eventData.isPR && !eventData.claudeBranch
-          ? `
+      ${eventData.isPR && !eventData.claudeBranch
+      ? `
       - Push directly using mcp__github_file_ops__commit_files to the existing branch (works for both new and existing files).
       - Use mcp__github_file_ops__commit_files to commit files atomically in a single commit (supports single or multiple files).
       - When pushing changes with this tool and the trigger user is not "Unknown", include a Co-authored-by trailer in the commit message.
       - Use: "Co-authored-by: ${githubData.triggerDisplayName ?? context.triggerUsername} <${context.triggerUsername}@users.noreply.github.com>"`
-          : `
+      : `
       - You are already on the correct branch (${eventData.claudeBranch || "the PR branch"}). Do not create a new branch.
       - Push changes directly to the current branch using mcp__github_file_ops__commit_files (works for both new and existing files)
       - Use mcp__github_file_ops__commit_files to commit files atomically in a single commit (supports single or multiple files).
       - When pushing changes and the trigger user is not "Unknown", include a Co-authored-by trailer in the commit message.
       - Use: "Co-authored-by: ${githubData.triggerDisplayName ?? context.triggerUsername} <${context.triggerUsername}@users.noreply.github.com>"
-      ${
-        eventData.claudeBranch
-          ? `- Provide a URL to create a PR manually in this format:
+      ${eventData.claudeBranch
+        ? `- Provide a URL to create a PR manually in this format:
         [Create a PR](${GITHUB_SERVER_URL}/${context.repository}/compare/${eventData.baseBranch}...<branch-name>?quick_pull=1&title=<url-encoded-title>&body=<url-encoded-body>)
         - IMPORTANT: Use THREE dots (...) between branch names, not two (..)
           Example: ${GITHUB_SERVER_URL}/${context.repository}/compare/main...feature-branch (correct)
@@ -550,9 +545,9 @@ ${context.directPrompt ? `   - DIRECT INSTRUCTION: A direct instruction was prov
           - Reference to the original ${eventData.isPR ? "PR" : "issue"}
           - The signature: "Generated with [Claude Code](https://claude.ai/code)"
         - Just include the markdown link with text "Create a PR" - do not add explanatory text before it like "You can create a PR using this link"`
-          : ""
+        : ""
       }`
-      }
+    }
 
    C. For Complex Changes:
       - Break down the implementation into subtasks in your comment checklist.
@@ -658,11 +653,15 @@ export async function createPrompt(
     console.log(promptContent);
     console.log("=======================");
 
+    console.log("starting to write prompt file...");
+    console.log(`writing to ${process.env.RUNNER_TEMP}/claude-prompts/claude-prompt.txt`);
     // Write the prompt file
     await writeFile(
       `${process.env.RUNNER_TEMP}/claude-prompts/claude-prompt.txt`,
       promptContent,
     );
+    console.log("Prompt file written successfully!");
+    console.log(`${process.env.RUNNER_TEMP}/claude-prompts/claude-prompt.txt`);
 
     // Set allowed tools
     const allAllowedTools = buildAllowedToolsString(
