@@ -643,7 +643,6 @@ export async function createPrompt(
 
     console.log("===== Create /tmp/claude-prompts dir=====");
     await mkdir("/tmp/claude-prompts", { recursive: true });
-    console.log("===== Create /tmp/claude-prompts/claude-prompt.txt file=====");
 
     // Generate the prompt
     const promptContent = generatePrompt(preparedContext, githubData);
@@ -653,7 +652,6 @@ export async function createPrompt(
     console.log(promptContent);
     console.log("=======================");
 
-    console.log("starting to write prompt file...");
     console.log(`writing to /tmp/claude-prompts/claude-prompt.txt`);
     // Write the prompt file
     await writeFile(
@@ -661,7 +659,6 @@ export async function createPrompt(
       promptContent,
     );
     console.log("Prompt file written successfully!");
-    console.log(`/tmp/claude-prompts/claude-prompt.txt`);
 
     // Set allowed tools
     const allAllowedTools = buildAllowedToolsString(
