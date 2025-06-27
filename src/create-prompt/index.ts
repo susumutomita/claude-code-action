@@ -641,7 +641,9 @@ export async function createPrompt(
       claudeBranch,
     );
 
+    console.log("===== Create /tmp/claude-prompts dir=====");
     await mkdir("/tmp/claude-prompts", { recursive: true });
+    console.log("===== Create /tmp/claude-prompts/claude-prompt.txt file=====");
 
     // Generate the prompt
     const promptContent = generatePrompt(preparedContext, githubData);
