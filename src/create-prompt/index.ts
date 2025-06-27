@@ -654,14 +654,14 @@ export async function createPrompt(
     console.log("=======================");
 
     console.log("starting to write prompt file...");
-    console.log(`writing to ${process.env.RUNNER_TEMP}/claude-prompts/claude-prompt.txt`);
+    console.log(`writing to tmp/claude-prompts/claude-prompt.txt`);
     // Write the prompt file
     await writeFile(
-      `${process.env.RUNNER_TEMP}/claude-prompts/claude-prompt.txt`,
+      `tmp/claude-prompts/claude-prompt.txt`,
       promptContent,
     );
     console.log("Prompt file written successfully!");
-    console.log(`${process.env.RUNNER_TEMP}/claude-prompts/claude-prompt.txt`);
+    console.log(`tmp/claude-prompts/claude-prompt.txt`);
 
     // Set allowed tools
     const allAllowedTools = buildAllowedToolsString(
